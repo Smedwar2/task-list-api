@@ -7,9 +7,18 @@ from ..route_utilities import get_model_by_id
 
 task_bp = Blueprint("tasks", __name__) #attaches routes to the blueprint, which is then registered in __init__.py
 
-@task_bp.get("/tasks") #route getting all tasks, returns a list of dictionaries
+@task_bp.get("/tasks") #register route getting all tasks, returns a list of dictionaries #flask connection to URL 
 def get_all_tasks():
-    tasks = db.session.query(Task).all() #ask db for all tasks and store them in a variable to reuse later
+
+    sort_param = request.args.get("sort")
+
+    if sort_param == "asc":
+        tasks = db.session.query(Task).order_by(Task.title).all()
+    elif sort_param == "desc":
+        tasks = db.session.query(Task).order_by(Task.title.desc()).all()
+    else:
+        tasks = db.session.query(Task).all() #ask db for all tasks and store them in a variable to reuse later
+
     task_list = [task.to_dict() for task in tasks] #turn tasks from objects into a list of dictionaries using the to_dict method in the Task model
     return task_list #return response to the client as a list of dictionaries
 
