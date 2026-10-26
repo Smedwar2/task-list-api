@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify # organizes task routes into a blueprint
 from ..models.task import Task # lets routes know about the Task model
 from ..db import db # ask db for records
-from ..route_utilities import get_model_by_id
+from .route_utilities import get_model_by_id
 from datetime import datetime
 from app.models import task
 import os
