@@ -96,6 +96,8 @@ def mark_complete_task(task_id): # receieves id
         headers=headers,
         json=message_body
     )
+    if not slack_response.json().get("ok"):
+        print("Slack notification failed:", slack_response.json())
 
     return "", 204, {"Content-Type": "application/json"}
 
