@@ -2,6 +2,9 @@ from flask import Blueprint, request, jsonify #organizes task routes into a blue
 from ..models.task import Task #lets routes know about the Task model
 from ..db import db #ask db for records
 from ..route_utilities import get_model_by_id
+from datetime import datetime
+
+from app.models import task
 
 
 
@@ -62,5 +65,27 @@ def delete_task(task_id):
         return {"details": "Task not found"}, 404
 
     db.session.delete(task) #tells db delete the task from the db
+    db.session.commit()
+    return "", 204, {"Content-Type": "application/json"}
+
+@task_bp.patch("/tasks/<int:task_id>/mark_complete") #register route that accepts http patch requests to mark a task as complete using the task id as a parameter in the URL
+def mark_complete_task(task_id): #receieves id
+    task = get_model_by_id(Task, task_id)
+
+    if task is None:
+        return {"details": "Task not found"}, 404
+
+    task.completed_at = datetime.now() #gives currebt time to the completed_at column in the db for the task with the given id
+    db.session.commit() #confirms the changes to the db
+    return "", 204, {"Content-Type": "application/json"}
+
+@task_bp.patch("/tasks/<int:task_id>/mark_incomplete")
+def mark_incomplete_task(task_id):
+    task = get_model_by_id(Task, task_id)
+
+    if task is None:
+        return {"details": "Task not found"}, 404
+
+    task.completed_at = None
     db.session.commit()
     return "", 204, {"Content-Type": "application/json"}
