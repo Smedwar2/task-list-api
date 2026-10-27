@@ -27,12 +27,21 @@ def get_all_tasks():
     return task_list # return response to the client as a list of dictionaries
 
 
+
 @task_bp.get("/tasks/<int:task_id>")
 def get_one_task(task_id):
-    task = get_model_by_id(Task, task_id) # helper function to get a task by id, returns None if not found
+    task = get_model_by_id(Task, task_id)
+
     if task is None:
         return {"details": "Task not found"}, 404
-    return task.to_dict()
+
+    task_dict = task.to_dict()
+
+    if task.goal_id is not None:
+        task_dict["goal_id"] = task.goal_id
+
+    return task_dict
+
 
 
 @task_bp.post("/tasks")
